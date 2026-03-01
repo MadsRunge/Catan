@@ -1,12 +1,33 @@
-# Catan Desktop with Persistence
+# Catan Desktop App
 
-A desktop version of Catan (prototype) built with React, TypeScript, Vite, and Electron.
+A full implementation of the Settlers of Catan (base game) built with React, TypeScript, Vite, and Electron.
 
 ## Features
 
-- **Electron Integration**: Runs as a native desktop application.
-- **Game Persistence**: Save and Load your game state locally using Electron IPC and `electron-store`.
-- **Automatic Resume**: Check for existing saved games on startup.
+- **Electron Integration**: Runs as a native desktop application with a robust main process.
+- **Game Engine**: Pure TypeScript logic for board generation (19 hexes, tokens, desert, harbors), rules validation (setup phase, distance rule, costs), and resource distribution.
+- **Advanced Mechanics**: Full implementation of the Robber (discard, move, steal), Trading (Bank, Harbors, Players), and Development Cards (Knight, Victory Point, Road Building, Year of Plenty, Monopoly).
+- **Interactive UI**: Custom-built React board with clickable hexes, edges, and intersections for seamless gameplay.
+- **Player Bots**: Basic AI logic for 3-4 player games (human + bots).
+- **Persistence**: Save and load game states locally using Electron IPC and `electron-store`.
+- **Unit Tested**: Critical game rules verified with comprehensive unit tests (Vitest).
+
+## Project Structure
+
+```
+├── electron/          # Electron Main Process & Preload Scripts
+├── src/
+│   ├── api/           # IPC communication layer
+│   ├── components/    # React components (Board, Dashboard, EventLog)
+│   ├── game/          # Pure TypeScript Game Engine & Rules
+│   │   ├── __tests__/ # Unit tests for game logic
+│   │   ├── board.ts   # Board generation
+│   │   ├── engine.ts  # Core game loop & actions
+│   │   └── types.ts   # Shared TypeScript definitions
+│   ├── hooks/         # Custom React hooks (useGame)
+│   └── App.tsx        # Root application component
+└── vite.config.ts     # Vite, Electron & Vitest configuration
+```
 
 ## Getting Started
 
@@ -17,7 +38,8 @@ A desktop version of Catan (prototype) built with React, TypeScript, Vite, and E
 
 ### Installation
 
-1. Install dependencies:
+1. Clone the repository
+2. Install dependencies:
    ```bash
    pnpm install
    ```
@@ -28,7 +50,7 @@ Run the application in development mode:
 ```bash
 pnpm dev
 ```
-This will start the Vite dev server and launch the Electron application.
+This launches the Vite dev server and the Electron application.
 
 ### Building
 
@@ -37,33 +59,14 @@ Build the application for production:
 pnpm build
 ```
 
-## Persistence Implementation
+### Quality Assurance
 
-The persistence layer is implemented using Electron's IPC (Inter-Process Communication).
+- **Run Tests**: `pnpm test:run`
+- **Linting**: `pnpm lint`
+- **Type Checking**: `tsc -b`
 
-- **Main Process (`electron/main.ts`)**: Handles the actual file I/O using `electron-store`.
-- **Preload Script (`electron/preload.ts`)**: Exposes a secure bridge to the renderer process.
-- **Renderer Process (`src/api/ipc.ts`)**: Provides a typed API for the React components to interact with the persistence layer.
+## Known Limitations
 
-### IPC Methods
-
-- `saveGame(gameState)`: Saves the current game state.
-- `loadGame()`: Retrieves the saved game state.
-- `hasSavedGame()`: Checks if a saved game exists.
-- `clearGame()`: Deletes the saved game state.
-
-## Quality Assurance
-
-### Linting
-
-Run ESLint:
-```bash
-pnpm lint
-```
-
-### Type Checking
-
-Run TypeScript compiler:
-```bash
-pnpm tsc
-```
+- Bot AI is basic and focuses on random legal moves.
+- Expansions are not currently supported, but the architecture is modular for future additions.
+- Local multiplayer is single-instance (hot-seat style or human vs. bots).
