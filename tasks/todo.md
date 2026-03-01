@@ -1,5 +1,6 @@
 # Game Engine Implementation Plan
 
+- [x] Fix Electron install error (pnpm v10 build scripts approval)
 - [x] Define game state types (`src/game/types.ts`)
 - [x] Implement board generation logic (`src/game/board.ts`)
     - [x] Hexes (19 hexes, resources, desert)

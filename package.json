@@ -50,5 +50,12 @@
       "dist-electron"
     ],
     "asar": true
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "electron-winstaller",
+      "esbuild"
+    ]
   }
 }
