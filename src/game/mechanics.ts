@@ -1,4 +1,4 @@
-import { GameState, Player, Resource, Hex } from './types';
+import { GameState, Player, Resource } from './types';
 
 export function handleSevenRolled(state: GameState): GameState {
   const updatedPlayers = state.players.map(player => {

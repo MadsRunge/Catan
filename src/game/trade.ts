@@ -1,4 +1,4 @@
-import { GameState, Resource, Player } from './types';
+import { GameState, Resource } from './types';
 
 export function bankTrade(state: GameState, offer: Resource, request: Resource): GameState {
   const currentPlayer = state.players[state.currentPlayerIndex];

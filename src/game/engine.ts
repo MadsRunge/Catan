@@ -1,4 +1,4 @@
-import { GameState, Player, ResourceType, Hex, Node, Edge, BuildingType } from "./types";
+import { GameState, Player, ResourceType, Resource, BuildingType } from "./types";
 import { generateBoard } from "./board";
 
 export function initializeGame(numPlayers: number): GameState {
@@ -14,12 +14,15 @@ export function initializeGame(numPlayers: number): GameState {
         [ResourceType.Wheat]: 0,
         [ResourceType.Brick]: 0,
         [ResourceType.Ore]: 0,
-        [ResourceType.None]: 0,
       },
+      devCards: [],
       settlements: 0,
       cities: 0,
       roads: 0,
+      knightsPlayed: 0,
+      longestRoad: 0,
       victoryPoints: 0,
+      playedDevCardThisTurn: false,
     });
   }
 
@@ -34,7 +37,8 @@ export function initializeGame(numPlayers: number): GameState {
     currentPlayerIndex: 0,
     robberHexId: desertHex ? desertHex.id : 0,
     diceResult: null,
-    winner: null,
+    winnerId: null,
+    devCardDeck: [],
   };
 }
 
@@ -45,12 +49,12 @@ export function rollDice(): number {
 export function distributeResources(state: GameState, diceRoll: number): GameState {
   if (diceRoll === 7) return state; // Robber logic not implemented for now
 
-  const newState = { ...state, players: [...state.players.map(p => ({ ...p, resources: { ...p.resources } }))] };
+  const newState = { ...state, players: state.players.map(p => ({ ...p, resources: { ...p.resources } })) };
 
   newState.hexes.forEach(hex => {
     if (hex.token === diceRoll && hex.id !== state.robberHexId) {
       // Find nodes touching this hex
-      const touchingNodes = Array.from(newState.nodes.values()).filter(node => 
+      const touchingNodes = Object.values(newState.nodes).filter(node => 
         node.id.includes(`${hex.q},${hex.r},${hex.s}`)
       );
 
@@ -58,7 +62,9 @@ export function distributeResources(state: GameState, diceRoll: number): GameSta
         if (node.owner !== null) {
           const player = newState.players[node.owner];
           const amount = node.building === BuildingType.City ? 2 : 1;
-          player.resources[hex.resource] += amount;
+          if (hex.resource !== ResourceType.None) {
+            player.resources[hex.resource as Resource] += amount;
+          }
         }
       });
     }
@@ -68,19 +74,19 @@ export function distributeResources(state: GameState, diceRoll: number): GameSta
 }
 
 export function canPlaceSettlement(state: GameState, playerId: number, nodeId: string, isSetupPhase: boolean = false): boolean {
-  const node = state.nodes.get(nodeId);
+  const node = state.nodes[nodeId];
   if (!node || node.owner !== null) return false;
 
-  const adjacentNodeIds = Array.from(state.edges.keys())
+  const adjacentNodeIds = Object.keys(state.edges)
     .filter(edgeId => edgeId.includes(nodeId))
     .map(edgeId => edgeId.replace(nodeId, "").replace("<->", ""));
 
   for (const adjId of adjacentNodeIds) {
-    if (state.nodes.get(adjId)?.owner !== null) return false;
+    if (state.nodes[adjId]?.owner !== null) return false;
   }
 
   if (!isSetupPhase) {
-    const hasConnectingRoad = Array.from(state.edges.values()).some(edge => 
+    const hasConnectingRoad = Object.values(state.edges).some(edge => 
       edge.owner === playerId && edge.id.includes(nodeId)
     );
     if (!hasConnectingRoad) return false;
@@ -96,14 +102,14 @@ export function canPlaceSettlement(state: GameState, playerId: number, nodeId: s
 export function placeSettlement(state: GameState, playerId: number, nodeId: string, isSetupPhase: boolean = false): GameState {
   if (!canPlaceSettlement(state, playerId, nodeId, isSetupPhase)) return state;
 
-  const newState = { 
+  const newState: GameState = { 
     ...state, 
-    nodes: new Map(state.nodes),
+    nodes: { ...state.nodes },
     players: state.players.map(p => p.id === playerId ? { ...p, resources: { ...p.resources } } : p)
   };
 
-  const node = newState.nodes.get(nodeId)!;
-  newState.nodes.set(nodeId, { ...node, owner: playerId, building: BuildingType.Settlement });
+  const node = newState.nodes[nodeId];
+  newState.nodes[nodeId] = { ...node, owner: playerId, building: BuildingType.Settlement };
 
   const player = newState.players[playerId];
   player.settlements++;
@@ -120,16 +126,16 @@ export function placeSettlement(state: GameState, playerId: number, nodeId: stri
 }
 
 export function placeRoad(state: GameState, playerId: number, edgeId: string, isSetupPhase: boolean = false): GameState {
-  const edge = state.edges.get(edgeId);
+  const edge = state.edges[edgeId];
   if (!edge || edge.owner !== null) return state;
 
-  const newState = { 
+  const newState: GameState = { 
     ...state, 
-    edges: new Map(state.edges),
+    edges: { ...state.edges },
     players: state.players.map(p => p.id === playerId ? { ...p, resources: { ...p.resources } } : p)
   };
 
-  newState.edges.set(edgeId, { ...edge, owner: playerId });
+  newState.edges[edgeId] = { ...edge, owner: playerId };
   const player = newState.players[playerId];
   player.roads++;
 
@@ -142,20 +148,20 @@ export function placeRoad(state: GameState, playerId: number, edgeId: string, is
 }
 
 export function placeCity(state: GameState, playerId: number, nodeId: string): GameState {
-  const node = state.nodes.get(nodeId);
+  const node = state.nodes[nodeId];
   if (!node || node.owner !== playerId || node.building !== BuildingType.Settlement) return state;
 
   const p = state.players[playerId];
   if (p.resources[ResourceType.Ore] < 3 || p.resources[ResourceType.Wheat] < 2) return state;
 
-  const newState = { 
+  const newState: GameState = { 
     ...state, 
-    nodes: new Map(state.nodes),
+    nodes: { ...state.nodes },
     players: state.players.map(p => p.id === playerId ? { ...p, resources: { ...p.resources } } : p)
   };
 
-  const updatedNode = newState.nodes.get(nodeId)!;
-  newState.nodes.set(nodeId, { ...updatedNode, building: BuildingType.City });
+  const updatedNode = newState.nodes[nodeId];
+  newState.nodes[nodeId] = { ...updatedNode, building: BuildingType.City };
 
   const player = newState.players[playerId];
   player.settlements--;

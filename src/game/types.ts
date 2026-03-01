@@ -1,28 +1,28 @@
 export enum ResourceType {
-  Wood = "Wood",
-  Sheep = "Sheep",
-  Wheat = "Wheat",
-  Brick = "Brick",
-  Ore = "Ore",
-  None = "None", // For Desert
+  Wood = "wood",
+  Sheep = "sheep",
+  Wheat = "wheat",
+  Brick = "brick",
+  Ore = "ore",
+  None = "none", // For Desert
 }
 
 export type Resource = 'wood' | 'brick' | 'sheep' | 'wheat' | 'ore';
 
 export enum HexType {
-  Forest = "Forest",
-  Pasture = "Pasture",
-  Fields = "Fields",
-  Hills = "Hills",
-  Mountains = "Mountains",
-  Desert = "Desert",
+  Forest = "forest",
+  Pasture = "pasture",
+  Fields = "fields",
+  Hills = "hills",
+  Mountains = "mountains",
+  Desert = "desert",
 }
 
 export type DevCard = 'knight' | 'victory_point' | 'road_building' | 'year_of_plenty' | 'monopoly';
 
 export enum BuildingType {
-  Settlement = "Settlement",
-  City = "City",
+  Settlement = "settlement",
+  City = "city",
 }
 
 export interface Player {

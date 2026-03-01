@@ -1,11 +1,14 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
 import ElectronStore from 'electron-store'
+
+const _dirname = dirname(fileURLToPath(import.meta.url))
 
 const store = new ElectronStore()
 
-process.env.DIST = join(__dirname, '../dist')
-process.env.PUBLIC = app.isPackaged ? process.env.DIST : join(__dirname, '../public')
+process.env.DIST = join(_dirname, '../dist')
+process.env.PUBLIC = app.isPackaged ? process.env.DIST : join(_dirname, '../public')
 
 let win: BrowserWindow | null
 
@@ -15,7 +18,7 @@ function createWindow() {
     height: 800,
     icon: join(process.env.PUBLIC || '', 'vite.svg'),
     webPreferences: {
-      preload: join(__dirname, 'preload.js'),
+      preload: join(_dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
     },
