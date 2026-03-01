@@ -1,0 +1,94 @@
+TASK:
+Done in 2.9s using pnpm v10.16.1
+madsrunge@mads-macbook Catan % pnpm dev
+
+> catan@0.0.1 dev /Users/madsrunge/Developer/Catan
+> vite
+
+
+  VITE v7.3.1  ready in 1604 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+vite v7.3.1 building client environment for development...
+
+watching for file changes...
+vite v7.3.1 building client environment for development...
+
+watching for file changes...
+
+build started...
+
+build started... (x2)
+✓ 1 modules transformed.
+✓ 1 modules transformed. (x2)
+dist-electron/preload.js  0.86 kB │ gzip: 0.30 kB
+built in 110ms.
+dist-electron/main.js  2.10 kB │ gzip: 0.78 kB
+built in 111ms.
+/Users/madsrunge/Developer/Catan/node_modules/.pnpm/electron@40.6.1/node_modules/electron/index.js:17
+    throw new Error('Electron failed to install correctly, please delete node_modules/electron and try installing again');
+          ^
+
+Error: Electron failed to install correctly, please delete node_modules/electron and try installing again
+    at getElectronPath (/Users/madsrunge/Developer/Catan/node_modules/.pnpm/electron@40.6.1/node_modules/electron/index.js:17:11)
+    at Object.<anonymous> (/Users/madsrunge/Developer/Catan/node_modules/.pnpm/electron@40.6.1/node_modules/electron/index.js:21:18)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at cjsLoader (node:internal/modules/esm/translators:309:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:202:7)
+
+Node.js v22.21.1
+ ELIFECYCLE  Command failed with exit code 1.
+madsrunge@mads-macbook Catan % pnpm dev
+
+> catan@0.0.1 dev /Users/madsrunge/Developer/Catan
+> vite
+
+
+  VITE v7.3.1  ready in 182 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+vite v7.3.1 building client environment for development...
+
+watching for file changes...
+vite v7.3.1 building client environment for development...
+
+watching for file changes...
+
+build started...
+
+build started... (x2)
+✓ 1 modules transformed.
+✓ 1 modules transformed. (x2)
+dist-electron/preload.js  0.86 kB │ gzip: 0.30 kB
+built in 97ms.
+dist-electron/main.js  2.10 kB │ gzip: 0.78 kB
+built in 98ms.
+/Users/madsrunge/Developer/Catan/node_modules/.pnpm/electron@40.6.1/node_modules/electron/index.js:17
+    throw new Error('Electron failed to install correctly, please delete node_modules/electron and try installing again');
+          ^
+
+Error: Electron failed to install correctly, please delete node_modules/electron and try installing again
+    at getElectronPath (/Users/madsrunge/Developer/Catan/node_modules/.pnpm/electron@40.6.1/node_modules/electron/index.js:17:11)
+    at Object.<anonymous> (/Users/madsrunge/Developer/Catan/node_modules/.pnpm/electron@40.6.1/node_modules/electron/index.js:21:18)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at cjsLoader (node:internal/modules/esm/translators:309:5)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:202:7)
+
+Node.js v22.21.1
+ ELIFECYCLE  Command failed with exit code 1.
+madsrunge@mads-macbook Catan %
+

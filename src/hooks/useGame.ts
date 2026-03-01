@@ -148,5 +148,6 @@ export const useGame = () => {
     buildSettlement,
     buildRoad,
     endTurn,
+    setGameState,
   };
 };

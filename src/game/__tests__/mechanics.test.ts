@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { handleSevenRolled, moveRobber, stealResource } from '../mechanics';
-import { GameState, Player, Hex } from '../types';
+import { GameState, Player, Hex, HexType, ResourceType } from '../types';
 
 const createMockPlayer = (id: number, resources: any = {}): Player => ({
   id,
@@ -17,9 +17,27 @@ const createMockPlayer = (id: number, resources: any = {}): Player => ({
 
 const createMockHex = (id: number): Hex => ({
   id,
-  resource: 'wood',
-  numberToken: 8,
+  type: HexType.Forest,
+  resource: ResourceType.Wood,
+  token: 8,
   hasRobber: false,
+  q: 0,
+  r: 0,
+  s: 0,
+});
+
+const createMockGameState = (overrides: Partial<GameState> = {}): GameState => ({
+  players: [],
+  currentPlayerIndex: 0,
+  hexes: [],
+  nodes: {},
+  edges: {},
+  harbors: [],
+  robberHexId: 0,
+  diceResult: null,
+  winnerId: null,
+  devCardDeck: [],
+  ...overrides,
 });
 
 describe('Mechanics', () => {
@@ -28,14 +46,9 @@ describe('Mechanics', () => {
       const player1 = createMockPlayer(1, { wood: 10 }); // 10 resources, should discard 5
       const player2 = createMockPlayer(2, { wood: 4 });  // 4 resources, should not discard
 
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1, player2],
-        currentPlayerIndex: 0,
-        hexes: [],
-        robberHexId: 0,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = handleSevenRolled(initialState);
       
@@ -49,15 +62,11 @@ describe('Mechanics', () => {
 
   describe('moveRobber', () => {
     it('should update the robber location', () => {
-      const hexes = [createMockHex(1), createMockHex(2)];
-      const initialState: GameState = {
-        players: [],
-        currentPlayerIndex: 0,
+      const hexes = [createMockHex(1), { ...createMockHex(2), id: 2 }];
+      const initialState = createMockGameState({
         hexes,
         robberHexId: 1,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = moveRobber(initialState, 2);
       expect(newState.robberHexId).toBe(2);
@@ -71,14 +80,10 @@ describe('Mechanics', () => {
       const player1 = createMockPlayer(1, { wood: 0 });
       const player2 = createMockPlayer(2, { wood: 1 });
 
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1, player2],
-        currentPlayerIndex: 0,
-        hexes: [],
         robberHexId: 1,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = stealResource(initialState, 2);
       expect(newState.players[0].resources.wood).toBe(1);

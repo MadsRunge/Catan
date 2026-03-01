@@ -1,9 +1,8 @@
-import { GameState, Player, Hex, Resource } from './types';
+import { GameState, Resource } from './types';
 import { moveRobber, stealResource } from './mechanics';
 import { bankTrade } from './trade';
 
 export function botTurn(state: GameState): GameState {
-  const currentPlayer = state.players[state.currentPlayerIndex];
   let updatedState = { ...state };
 
   // 1. Move Robber if 7 was rolled
@@ -27,7 +26,7 @@ export function botChooseRobberHex(state: GameState): number {
   return randomHex.id;
 }
 
-export function botChooseStealTarget(state: GameState, targetHexId: number): number | null {
+export function botChooseStealTarget(state: GameState, _targetHexId: number): number | null {
   // Simple bot logic: steal from anyone on the target hex who isn't the current bot.
   // This would require knowledge of which players are on which hexes.
   // Since we don't have that mapping yet, let's just pick another player at random who has resources.

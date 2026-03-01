@@ -52,15 +52,25 @@ export function generateHexes(): Hex[] {
       if (type !== HexType.Desert) {
         token = shuffledTokens[tokenIndex++];
       }
-      hexes.push({ id: id++, type, resource: getResourceType(type), token, q, r, s });
+      const resource = getResourceType(type);
+      hexes.push({ 
+        id: id++, 
+        type, 
+        resource, 
+        token, 
+        q, 
+        r, 
+        s, 
+        hasRobber: type === HexType.Desert 
+      });
     }
   }
   return hexes;
 }
 
-export function generateNodesAndEdges(hexes: Hex[]): { nodes: Map<string, Node>, edges: Map<string, Edge> } {
-  const nodes = new Map<string, Node>();
-  const edges = new Map<string, Edge>();
+export function generateNodesAndEdges(hexes: Hex[]): { nodes: Record<string, Node>, edges: Record<string, Edge> } {
+  const nodes: Record<string, Node> = {};
+  const edges: Record<string, Edge> = {};
 
   const hexMap = new Map<string, Hex>();
   hexes.forEach(h => hexMap.set(`${h.q},${h.r},${h.s}`, h));
@@ -79,14 +89,14 @@ export function generateNodesAndEdges(hexes: Hex[]): { nodes: Map<string, Node>,
 
     const nodeIds: string[] = [];
 
-    vertexDefinitions.forEach((vDef, i) => {
+    vertexDefinitions.forEach((vDef) => {
       const nodeId = vDef
         .map(coord => coord.join(","))
         .sort()
         .join("|");
       
-      if (!nodes.has(nodeId)) {
-        nodes.set(nodeId, { id: nodeId, owner: null, building: null });
+      if (!nodes[nodeId]) {
+        nodes[nodeId] = { id: nodeId, owner: null, building: null };
       }
       nodeIds.push(nodeId);
     });
@@ -95,8 +105,8 @@ export function generateNodesAndEdges(hexes: Hex[]): { nodes: Map<string, Node>,
       const n1 = nodeIds[i];
       const n2 = nodeIds[(i + 1) % 6];
       const edgeId = [n1, n2].sort().join("<->");
-      if (!edges.has(edgeId)) {
-        edges.set(edgeId, { id: edgeId, owner: null });
+      if (!edges[edgeId]) {
+        edges[edgeId] = { id: edgeId, owner: null };
       }
     }
   });
@@ -104,10 +114,10 @@ export function generateNodesAndEdges(hexes: Hex[]): { nodes: Map<string, Node>,
   return { nodes, edges };
 }
 
-export function generateHarbors(nodes: Map<string, Node>): Harbor[] {
+export function generateHarbors(nodes: Record<string, Node>): Harbor[] {
   const shuffledHarborTypes = shuffle(HARBOR_TYPES);
   const harbors: Harbor[] = [];
-  const nodeIds = Array.from(nodes.keys());
+  const nodeIds = Object.keys(nodes);
   
   // Assign harbors to pairs of nodes on the boundary (simplified for this task)
   for (let i = 0; i < 9; i++) {
@@ -122,8 +132,8 @@ export function generateHarbors(nodes: Map<string, Node>): Harbor[] {
 
 export function generateBoard(): { 
   hexes: Hex[], 
-  nodes: Map<string, Node>, 
-  edges: Map<string, Edge>, 
+  nodes: Record<string, Node>, 
+  edges: Record<string, Edge>, 
   harbors: Harbor[] 
 } {
   const hexes = generateHexes();

@@ -15,18 +15,27 @@ const createMockPlayer = (id: number, resources: any = {}): Player => ({
   playedDevCardThisTurn: false,
 });
 
+const createMockGameState = (overrides: Partial<GameState> = {}): GameState => ({
+  players: [],
+  currentPlayerIndex: 0,
+  hexes: [],
+  nodes: {},
+  edges: {},
+  harbors: [],
+  robberHexId: 0,
+  diceResult: null,
+  winnerId: null,
+  devCardDeck: [],
+  ...overrides,
+});
+
 describe('Trade', () => {
   describe('bankTrade', () => {
     it('should exchange 4:1 with the bank', () => {
       const player1 = createMockPlayer(1, { wood: 4, brick: 0 });
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1],
-        currentPlayerIndex: 0,
-        hexes: [],
-        robberHexId: 0,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = bankTrade(initialState, 'wood', 'brick');
       expect(newState.players[0].resources.wood).toBe(0);
@@ -35,14 +44,9 @@ describe('Trade', () => {
 
     it('should not trade if insufficient resources', () => {
       const player1 = createMockPlayer(1, { wood: 3, brick: 0 });
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1],
-        currentPlayerIndex: 0,
-        hexes: [],
-        robberHexId: 0,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = bankTrade(initialState, 'wood', 'brick');
       expect(newState.players[0].resources.wood).toBe(3);
@@ -53,14 +57,9 @@ describe('Trade', () => {
   describe('harborTrade', () => {
     it('should exchange 3:1 with a generic harbor', () => {
       const player1 = createMockPlayer(1, { wood: 3, brick: 0 });
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1],
-        currentPlayerIndex: 0,
-        hexes: [],
-        robberHexId: 0,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = harborTrade(initialState, 'wood', 'brick', 3);
       expect(newState.players[0].resources.wood).toBe(0);
@@ -69,14 +68,9 @@ describe('Trade', () => {
 
     it('should exchange 2:1 with a specific harbor', () => {
       const player1 = createMockPlayer(1, { wood: 2, brick: 0 });
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1],
-        currentPlayerIndex: 0,
-        hexes: [],
-        robberHexId: 0,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = harborTrade(initialState, 'wood', 'brick', 2);
       expect(newState.players[0].resources.wood).toBe(0);
@@ -89,14 +83,9 @@ describe('Trade', () => {
       const player1 = createMockPlayer(1, { wood: 2, brick: 0 });
       const player2 = createMockPlayer(2, { wood: 0, brick: 1 });
 
-      const initialState: GameState = {
+      const initialState = createMockGameState({
         players: [player1, player2],
-        currentPlayerIndex: 0,
-        hexes: [],
-        robberHexId: 0,
-        devCardDeck: [],
-        winnerId: null,
-      };
+      });
 
       const newState = playerTrade(initialState, 1, 2, { wood: 1 }, { brick: 1 });
       expect(newState.players[0].resources.wood).toBe(1);
