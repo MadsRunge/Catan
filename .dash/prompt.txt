@@ -1,0 +1,10 @@
+TASK:
+Implement pure TS logic for game state, board generation (19 hexes, tokens, desert, harbors), and core rules (placements, dice roll, resource distribution). Write unit tests for generation and validation.
+
+FOCUS FILES (primary areas to work in):
+src/game/types.ts
+src/game/board.ts
+src/game/engine.ts
+src/game/engine.test.ts
+
+NOTE: You are a subagent. Complete your specific task and commit your changes.
