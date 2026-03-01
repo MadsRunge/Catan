@@ -7,6 +7,8 @@ export enum ResourceType {
   None = "None", // For Desert
 }
 
+export type Resource = 'wood' | 'brick' | 'sheep' | 'wheat' | 'ore';
+
 export enum HexType {
   Forest = "Forest",
   Pasture = "Pasture",
@@ -16,19 +18,35 @@ export enum HexType {
   Desert = "Desert",
 }
 
+export type DevCard = 'knight' | 'victory_point' | 'road_building' | 'year_of_plenty' | 'monopoly';
+
+export enum BuildingType {
+  Settlement = "Settlement",
+  City = "City",
+}
+
+export interface Player {
+  id: number;
+  resources: Record<Resource, number>;
+  devCards: DevCard[];
+  settlements: number;
+  cities: number;
+  roads: number;
+  knightsPlayed: number;
+  longestRoad: number;
+  victoryPoints: number;
+  playedDevCardThisTurn: boolean;
+}
+
 export interface Hex {
   id: number;
   type: HexType;
   resource: ResourceType;
   token: number | null; // Null for desert
+  hasRobber: boolean;
   q: number; // Cubic coordinates
   r: number;
   s: number;
-}
-
-export enum BuildingType {
-  Settlement = "Settlement",
-  City = "City",
 }
 
 export interface Node {
@@ -56,23 +74,15 @@ export interface Harbor {
   nodeIds: string[]; // Usually 2 nodes
 }
 
-export interface Player {
-  id: number;
-  resources: Record<ResourceType, number>;
-  settlements: number;
-  cities: number;
-  roads: number;
-  victoryPoints: number;
-}
-
 export interface GameState {
   hexes: Hex[];
-  nodes: Map<string, Node>;
-  edges: Map<string, Edge>;
+  nodes: Record<string, Node>; // Changed from Map for serialization
+  edges: Record<string, Edge>; // Changed from Map for serialization
   harbors: Harbor[];
   players: Player[];
   currentPlayerIndex: number;
   robberHexId: number;
   diceResult: number | null;
-  winner: number | null;
+  winnerId: number | null;
+  devCardDeck: DevCard[];
 }
