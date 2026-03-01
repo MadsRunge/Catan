@@ -1,5 +1,8 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
+import ElectronStore from 'electron-store'
+
+const store = new ElectronStore()
 
 process.env.DIST = join(__dirname, '../dist')
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : join(__dirname, '../public')
@@ -8,9 +11,13 @@ let win: BrowserWindow | null
 
 function createWindow() {
   win = new BrowserWindow({
+    width: 1200,
+    height: 800,
     icon: join(process.env.PUBLIC || '', 'vite.svg'),
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
   })
 
@@ -22,7 +29,6 @@ function createWindow() {
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL)
   } else {
-    // win.loadFile('dist/index.html')
     win.loadFile(join(process.env.DIST || '', 'index.html'))
   }
 }
@@ -41,3 +47,38 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+// IPC Handlers for Game Persistence
+ipcMain.handle('save-game', async (_event, gameState: unknown) => {
+  try {
+    store.set('gameState', gameState)
+    return { success: true }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('load-game', async () => {
+  try {
+    const gameState = store.get('gameState')
+    return { success: true, data: gameState }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('has-saved-game', async () => {
+  return store.has('gameState')
+})
+
+ipcMain.handle('clear-game', async () => {
+  try {
+    store.delete('gameState')
+    return { success: true }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    return { success: false, error: message }
+  }
+})

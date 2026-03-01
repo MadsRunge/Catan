@@ -1,0 +1,34 @@
+{
+  "subtasks": [
+    {
+      "title": "Setup & Project Foundation",
+      "provider": "gemini",
+      "description": "Set up Electron, Vite, React TS, and Vitest. Configure main/preload IPC. Establish the folder structure for game logic, UI, and types. Ensure pnpm dev/build/test works.",
+      "focusFiles": ["electron/", "vite.config.ts", "package.json", "tsconfig.json"]
+    },
+    {
+      "title": "Game Engine: Core Logic",
+      "provider": "gemini",
+      "description": "Implement pure TS logic for game state, board generation (19 hexes, tokens, desert, harbors), and core rules (placements, dice roll, resource distribution). Write unit tests for generation and validation.",
+      "focusFiles": ["src/game/types.ts", "src/game/board.ts", "src/game/engine.ts", "src/game/engine.test.ts"]
+    },
+    {
+      "title": "Game Engine: Advanced Mechanics & Bots",
+      "provider": "gemini",
+      "description": "Extend engine with Robber (discard, move, steal), Trading (Bank/Harbor/Player), Dev Cards (Knight, VP, etc.), Scoring (Longest Road, Largest Army, 10VP win), and basic bot logic for 3-4 players. Write tests for all mechanics.",
+      "focusFiles": ["src/game/mechanics.ts", "src/game/trade.ts", "src/game/scoring.ts", "src/game/bot.ts"]
+    },
+    {
+      "title": "UI Layer: Interactive Board & Controls",
+      "provider": "gemini",
+      "description": "Build React components for the interactive Catan board (Hex, Edge, Intersection) and player dashboard (Resources, Actions, Trade UI, Event Log). Wire UI to the Game Engine via custom hooks.",
+      "focusFiles": ["src/components/", "src/hooks/useGame.ts", "src/App.tsx"]
+    },
+    {
+      "title": "Persistence & Finalization",
+      "provider": "gemini",
+      "description": "Implement game persistence (Save/Load/Resume) via Electron IPC. Final polish on UI/UX, error handling, and documentation. Ensure all tests, linting, and typechecks pass.",
+      "focusFiles": ["electron/main.ts", "src/api/ipc.ts", "README.md", "src/App.tsx"]
+    }
+  ]
+}
